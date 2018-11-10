@@ -2,4 +2,4 @@
 
 Web Programming with Python and JavaScript
 
-A chatroom application like Slack
+A chatroom web application like Slack
