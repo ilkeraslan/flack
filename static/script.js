@@ -20,8 +20,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
   document.querySelector('#username-form').onsubmit = function() {
     // Create new item for list
-    const li = document.createElement('li');
-    li.innerHTML = "Your user name is: " + document.querySelector('#username-input').value;
+    const p = document.createElement('p');
+    p.innerHTML = "Your user name is: " + document.querySelector('#username-input').value;
 
     // Set innerHTML of username element
     let username = document.querySelector('#username-input').value;
@@ -29,9 +29,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Set localStorage for username
     localStorage.setItem('username', username);
-
-    // Append it to users
-    document.querySelector('#users').append(li);
 
     // Clear input field
     document.querySelector('#username-input').value = '';
