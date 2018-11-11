@@ -37,3 +37,14 @@ def create_channel():
         "success": True,
         "channel_name": channel['channel_name'],
         "channel_creator": channel['channel_creator']})
+
+
+@app.route("/get_channels", methods=["POST"])
+def get_channels():
+
+    # If no channel in channels, return False
+    if len(channels) is 0:
+        return jsonify({"success": False})
+
+    # Else, return channels
+    return jsonify({"success": True, "channels": channels})

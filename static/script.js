@@ -22,6 +22,38 @@ document.addEventListener('DOMContentLoaded', function() {
       document.querySelector('#username-submit').disabled = true;
   };
 
+  // Show current channels
+  // Initialize new request
+  let request = new XMLHttpRequest();
+  request.open('POST', '/get_channels');
+
+  // Callback function for when request completes
+  request.onload = () => {
+
+    // Extract JSON data from request
+    const data = JSON.parse(request.responseText);
+
+    // Update the channels div
+    if (data.success) {
+      let currentChannels = data.channels;
+      currentChannels.forEach(function(element) {
+        console.log(element['channel_name']);
+        const li = document.createElement("li");
+        li.innerHTML = element['channel_name'];
+        document.querySelector('#current-channels').append(li);
+      });
+    }
+    else {
+      const p = document.createElement("p");
+      p.innerHTML = 'No channels yet.';
+      p.id = 'no-channels-yet';
+      document.querySelector('#channels').appendChild(p);
+    }
+  }
+
+  // Send request
+  request.send();
+
   // When user submits name form
   document.querySelector('#username-form').onsubmit = function() {
 
@@ -56,13 +88,23 @@ document.addEventListener('DOMContentLoaded', function() {
       // Extract JSON data from request
       const data = JSON.parse(request.responseText);
 
-      // Update the channels div
+      // Update the channel-result div
       if (data.success) {
         const contents = `Added channel ${data.channel_name}.`
         document.querySelector('#channel-result').innerHTML = contents;
+        // Add it also to current-channels ul
+        const li = document.createElement("li");
+        li.innerHTML = data.channel_name;
+        // If it's the first channel to be added, remove 'No channels yet' from current-channels
+        let noChannel = document.querySelector('#no-channels-yet') !== null;
+        if (noChannel) {
+          let noChannelNode = document.querySelector('#no-channels-yet');
+          document.querySelector('#channels').removeChild(noChannelNode);
+        }
+        document.querySelector('#current-channels').append(li);
       }
       else {
-        document.querySelector('#channel-result').innerHTML = 'There was an error.';
+        document.querySelector('#channel-result').innerHTML = 'This channel already exists.';
       }
       console.log(data.channel_name);
     }
