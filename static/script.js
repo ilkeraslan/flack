@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
       document.querySelector('#username-submit').disabled = true;
   };
 
+  // When user submits name form
   document.querySelector('#username-form').onsubmit = function() {
 
     // Set innerHTML of username
@@ -40,4 +41,41 @@ document.addEventListener('DOMContentLoaded', function() {
     // Stop form from submitting to other page or website
     return false;
   };
+
+  // When user submits channel form
+  document.querySelector('#channel-form').onsubmit = () => {
+
+    // Initialize new request
+    const request = new XMLHttpRequest();
+    const channel = document.querySelector('#channel-input').value;
+    request.open('POST', '/create_channel');
+
+    // Callback function for when request completes
+    request.onload = () => {
+
+      // Extract JSON data from request
+      const data = JSON.parse(request.responseText);
+
+      // Update the channels div
+      if (data.success) {
+        const contents = `Added channel ${data.channel_name}.`
+        document.querySelector('#channel-result').innerHTML = contents;
+      }
+      else {
+        document.querySelector('#channel-result').innerHTML = 'There was an error.';
+      }
+      console.log(data.channel_name);
+    }
+
+    // Add data to send with request
+    const data = new FormData();
+    data.append('channel', channel);
+
+    // Send request
+    request.send(data);
+
+    // Stop form from submitting to other page or website
+    return false;
+  };
+
 });

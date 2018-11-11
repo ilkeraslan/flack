@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Flack</title>
-        <script type="text/javascript" src="/static/script.js"></script>
+      <script src="{{ url_for('static', filename='script.js') }}"></script>
+      <title>Flack</title>
     </head>
     <body>
         <div class="">
@@ -17,6 +17,12 @@
         </div>
         <div id="create-channel-div" class="">
           <h3>Provide a channel name</h3>
+          <form id="channel-form" class="" action="index.html" method="post">
+            <input id="channel-input" type="text" name="channel-input" autocomplete="off">
+            <input id="channel-submit" type="submit" value="Create">
+          </form>
         </div>
+        <div id="channel-result"></div>
+        <div id="channels"></div>
     </body>
 </html>
