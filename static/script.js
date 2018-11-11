@@ -4,8 +4,12 @@ if (!localStorage.getItem('username'))
 
 document.addEventListener('DOMContentLoaded', function() {
 
+  // Hide create-channel-div by default
+  let createChannelDiv = document.querySelector('#create-channel-div');
+  createChannelDiv.style.display = 'none';
+
   // Get localStorage for username
-  document.querySelector('#username').innerHTML = localStorage.getItem('username');
+  document.querySelector('#username').innerHTML = "Welcome " + localStorage.getItem('username');
 
   // By default, submit button is disabled
   document.querySelector('#username-submit').disabled = true;
@@ -19,19 +23,19 @@ document.addEventListener('DOMContentLoaded', function() {
   };
 
   document.querySelector('#username-form').onsubmit = function() {
-    // Create new item for list
-    const p = document.createElement('p');
-    p.innerHTML = "Your user name is: " + document.querySelector('#username-input').value;
 
-    // Set innerHTML of username element
+    // Set innerHTML of username
     let username = document.querySelector('#username-input').value;
-    document.querySelector('#username').innerHTML = username;
+    document.querySelector('#username').innerHTML = "Welcome " + username;
 
     // Set localStorage for username
     localStorage.setItem('username', username);
 
     // Clear input field
     document.querySelector('#username-input').value = '';
+
+    // Show create-channel-div after form submission
+    createChannelDiv.style.display = 'block';
 
     // Stop form from submitting to other page or website
     return false;
