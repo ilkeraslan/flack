@@ -37,10 +37,13 @@ document.addEventListener('DOMContentLoaded', function() {
     if (data.success) {
       let currentChannels = data.channels;
       currentChannels.forEach(function(element) {
-        console.log(element['channel_name']);
         const li = document.createElement("li");
+        const option = document.createElement("option");
         li.innerHTML = element['channel_name'];
+        option.value = element['channel_name'];
+        option.innerHTML = element['channel_name'];
         document.querySelector('#current-channels').append(li);
+        document.querySelector('#join-channel-dropdown').append(option);
       });
     }
     else {
@@ -92,9 +95,12 @@ document.addEventListener('DOMContentLoaded', function() {
       if (data.success) {
         const contents = `Added channel ${data.channel_name}.`
         document.querySelector('#channel-result').innerHTML = contents;
-        // Add it also to current-channels ul
+        // Add it also to current-channels ul and join-channel-dropdown select
         const li = document.createElement("li");
+        const option = document.createElement("option");
         li.innerHTML = data.channel_name;
+        option.value = data.channel_name;
+        option.innerHTML = data.channel_name;
         // If it's the first channel to be added, remove 'No channels yet' from current-channels
         let noChannel = document.querySelector('#no-channels-yet') !== null;
         if (noChannel) {
@@ -102,11 +108,11 @@ document.addEventListener('DOMContentLoaded', function() {
           document.querySelector('#channels').removeChild(noChannelNode);
         }
         document.querySelector('#current-channels').append(li);
+        document.querySelector('#join-channel-dropdown').append(option);
       }
       else {
         document.querySelector('#channel-result').innerHTML = 'This channel already exists.';
       }
-      console.log(data.channel_name);
     }
 
     // Add data to send with request
