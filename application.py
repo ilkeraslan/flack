@@ -48,3 +48,15 @@ def get_channels():
 
     # Else, return channels
     return jsonify({"success": True, "channels": channels})
+
+
+@app.route("/join_channel", methods=["POST"])
+def join_channel():
+
+    # Get the corresponding info from the form submitted
+    username = request.form.get("username")
+    channelToBeJoined = request.form.get("channelToBeJoined")
+
+    # TODO
+
+    return jsonify({"success": True})

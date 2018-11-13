@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
 
-    // Add data to send with request
+    // Add data to send with the request
     const data = new FormData();
     data.append('channel', channel);
 
@@ -132,9 +132,34 @@ document.addEventListener('DOMContentLoaded', function() {
   // When user submits joinChannelForm
   document.querySelector('#joinChannelForm').onsubmit = () => {
 
-    let channelToBeJoined = document.querySelector('#join-channel-dropdown').value;
+    // Initialize new request
+    const request = new XMLHttpRequest();
+    const username = localStorage.getItem('username');
+    const channelToBeJoined = document.querySelector('#join-channel-dropdown').value;
+    request.open('POST', '/join_channel');
 
-    console.log("Joined channel " + channelToBeJoined);
+    // Callback function for when request completes
+    request.onload = () => {
+
+      // Extract JSON data from request
+      const data = JSON.parse(request.responseText);
+
+      // Update the DOM
+      if (data.success) {
+        console.log("success");
+      }
+      else {
+        console.log("failed");
+      }
+    }
+
+    // Add data to sent with the request
+    const data = new FormData();
+    data.append('username', username);
+    data.append('channelToBeJoined', channelToBeJoined);
+
+    // Send request
+    request.send(data);
 
     // Stop form from submitting to other page or website
     return false;
