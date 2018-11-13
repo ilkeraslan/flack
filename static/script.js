@@ -122,6 +122,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Send request
     request.send(data);
 
+    // Clear form
+    document.querySelector('#channel-input').value = '';
+
+    // Stop form from submitting to other page or website
+    return false;
+  };
+
+  // When user submits joinChannelForm
+  document.querySelector('#joinChannelForm').onsubmit = () => {
+
+    let channelToBeJoined = document.querySelector('#join-channel-dropdown').value;
+
+    console.log("Joined channel " + channelToBeJoined);
+
     // Stop form from submitting to other page or website
     return false;
   };

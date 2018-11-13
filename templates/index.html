@@ -30,9 +30,12 @@
         </div>
         <div id="join-channel">
           <h3>Join a channel</h3>
-          <select id="join-channel-dropdown" onchange="alert('LOL')">
-            <option value="select" default>Select a channel</option>
-          </select>
+          <form id="joinChannelForm">
+            <select id="join-channel-dropdown">
+              <option value="select" default>Select a channel</option>
+            </select>
+            <input id="joinChannelButton" type="submit" value="Join">
+          </form>
         </div>
         <div id="current-channel">
           <h3>Your Current Channel</h3>
