@@ -30,7 +30,7 @@ def create_channel():
 
     # If channel does not exist, append it to channels list
     if not channel_exists:
-        channel = {"channel_name": ch, "channel_creator": "unknown"}
+        channel = {"channel_name": ch, "channel_creator": "unknown", "channel_members": []}
         channels.append(channel)
 
     return jsonify({
@@ -57,6 +57,13 @@ def join_channel():
     username = request.form.get("username")
     channelToBeJoined = request.form.get("channelToBeJoined")
 
-    # TODO
+    for c in channels:
+        # If channel exists
+        if c['channel_name'] == channelToBeJoined:
+            # Append info to that channel
+            c['channel_members'].append({"member": username, "join_time": "now"})
+            channelJoined = c
+            print(c)
+            return jsonify({"success": True, "channel_joined": c})
 
-    return jsonify({"success": True})
+    return jsonify({"success": False})

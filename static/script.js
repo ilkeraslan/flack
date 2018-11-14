@@ -147,6 +147,36 @@ document.addEventListener('DOMContentLoaded', function() {
       // Update the DOM
       if (data.success) {
         console.log("success");
+        console.log(data.channel_joined['channel_name']);
+        console.log(data.channel_joined['channel_creator']);
+
+        // Store data in variables
+        let channel_name = data.channel_joined['channel_name'];
+
+        // Append child to current-channel div
+        const p = document.createElement("p");
+        const ul = document.createElement("ul");
+        const li = document.createElement("li");
+
+        p.innerHTML = "Joined " + channel_name;
+        document.querySelector('#current-channel').appendChild(p);
+
+        ul.id = 'channelInfo';
+        document.querySelector('#current-channel').appendChild(ul);
+
+
+        // For-Each to access channel members
+        let channel_members = data.channel_joined['channel_members'];
+
+        channel_members.forEach(function(element) {
+          // TODO
+
+          console.log(element['member']);
+          console.log(element['join_time']);
+
+          li.innerHTML = element['member'] + ": joined " + element['join_time'];
+          document.querySelector('#channelInfo').appendChild(li);
+        });
       }
       else {
         console.log("failed");
