@@ -82,6 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize new request
     const request = new XMLHttpRequest();
+    const username = localStorage.getItem('username');
     const channel = document.querySelector('#channel-input').value;
     request.open('POST', '/create_channel');
 
@@ -118,6 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add data to send with the request
     const data = new FormData();
     data.append('channel', channel);
+    data.append('username', username);
 
     // Send request
     request.send(data);
@@ -147,8 +149,8 @@ document.addEventListener('DOMContentLoaded', function() {
       // Update the DOM
       if (data.success) {
         console.log("success");
-        console.log(data.channel_joined['channel_name']);
-        console.log(data.channel_joined['channel_creator']);
+        console.log("Channel name: " + data.channel_joined['channel_name']);
+        console.log("Channel creator: " + data.channel_joined['channel_creator']);
 
         // Store data in variables
         let channel_name = data.channel_joined['channel_name'];
@@ -156,7 +158,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Append child to current-channel div
         const p = document.createElement("p");
         const ul = document.createElement("ul");
-        const li = document.createElement("li");
 
         p.innerHTML = "Joined " + channel_name;
         document.querySelector('#current-channel').appendChild(p);
@@ -165,17 +166,27 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('#current-channel').appendChild(ul);
 
 
-        // For-Each to access channel members
+        // forEach to access channel members
         let channel_members = data.channel_joined['channel_members'];
 
-        channel_members.forEach(function(element) {
-          // TODO
+        channel_members.forEach(function(member) {
+          const li = document.createElement("li");
+          console.log(member['member']);
+          console.log(member['join_time']);
+          // Put member and join_time info to an li element and append it to channelInfo
+          li.innerHTML = member['member'] + ": joined " + member['join_time'];
+          document.querySelector('#channelInfo').append(li);
+        });
 
-          console.log(element['member']);
-          console.log(element['join_time']);
+        // forEach to access channel messages
+        let channel_messages = data.channel_joined['channel_messages'];
 
-          li.innerHTML = element['member'] + ": joined " + element['join_time'];
-          document.querySelector('#channelInfo').appendChild(li);
+        channel_messages.forEach(function(message) {
+          const li = document.createElement("li");
+          console.log(message);
+          // Put each message to an li element
+          li.innerHTML = message;
+          document.querySelector('#channelInfo').append(li);
         });
       }
       else {
