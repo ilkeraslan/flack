@@ -1,7 +1,9 @@
 import os
+import requests
 
 from flask import Flask, jsonify, render_template, request
 from flask_socketio import SocketIO, emit
+from datetime import datetime
 
 
 app = Flask(__name__)
@@ -65,7 +67,7 @@ def join_channel():
         # If channel exists
         if c['channel_name'] == channelToBeJoined:
             # Append info to that channel
-            c['channel_members'].append({"member": username, "join_time": "now"})
+            c['channel_members'].append({"member": username, "join_time": datetime.now()})
             channelJoined = c
             return jsonify({"success": True, "channel_joined": channelJoined})
 
@@ -90,6 +92,12 @@ def get_channel_messages(channel):
 
     return jsonify({"success": False})
 
+
+@socketio.on("submit message")
+def message(data):
+    message = data["message"]
+    print(message)
+    emit("announce message", {"message": message}, broadcast=True)
 
 
 def channel_exists(channel):

@@ -4,6 +4,9 @@ if (!localStorage.getItem('username'))
 
 document.addEventListener('DOMContentLoaded', function() {
 
+  // Connect to websocket
+  var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+
   // Hide create-channel-div by default
   let createChannelDiv = document.querySelector('#create-channel-div');
   createChannelDiv.style.display = 'none';
@@ -148,6 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       // Update the DOM
       if (data.success) {
+        // Set current channel node to empty string
         console.log("success");
         console.log("Channel name: " + data.channel_joined['channel_name']);
         console.log("Channel creator: " + data.channel_joined['channel_creator']);
@@ -155,15 +159,36 @@ document.addEventListener('DOMContentLoaded', function() {
         // Store data in variables
         let channel_name = data.channel_joined['channel_name'];
 
-        // Append child to current-channel div
+        // Append child elements to current-channel div
         const p = document.createElement("p");
         const ul = document.createElement("ul");
+        const form = document.createElement("form");
+        const input = document.createElement("input");
+        const button = document.createElement("input");
 
         p.innerHTML = "Joined " + channel_name;
         document.querySelector('#current-channel').appendChild(p);
 
         ul.id = 'channelInfo';
         document.querySelector('#current-channel').appendChild(ul);
+
+        form.id = 'sendMessageForm';
+        form.name = 'sendMessageForm';
+        form.method = 'post';
+        document.querySelector('#current-channel').appendChild(form);
+
+        input.id = 'sendMessageInput';
+        input.name = 'sendMessageInput';
+        input.type = 'text';
+        input.value = '';
+        input.placeholder = 'Type your message here.';
+        document.querySelector('#sendMessageForm').appendChild(input);
+
+        button.id = 'sendMessageSubmit';
+        button.name = 'sendMessageSubmit';
+        button.type = 'submit';
+        button.value = 'Send';
+        document.querySelector('#sendMessageForm').appendChild(button);
 
 
         // forEach to access channel members
@@ -201,6 +226,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Send request
     request.send(data);
+
+    // Stop form from submitting to other page or website
+    return false;
+  };
+
+  // When user submits sendMessageForm
+  document.querySelector('#sendMessageForm').onsubmit = () => {
+
+    // When socket is connected, configure button
+    socket.on('connect', () => {
+
+        // Button should emit "submit message" event
+        document.querySelector('#sendMessageSubmit').onclick = () => {
+
+          let message = document.querySelector('#sendMessageInput').value;
+          socket.emit('submit message', {'message': message});
+        };
+    });
+
+    // When a new message is announced, add to unordered list
+    socket.on('announce message', data => {
+
+      const li = document.createElement('li');
+      li.innerHTML = `New message: ${data.message}`;
+      document.querySelector('#channelInfo').append(li);
+    });
 
     // Stop form from submitting to other page or website
     return false;
