@@ -2,6 +2,9 @@
 if (!localStorage.getItem('username'))
   localStorage.setItem('username', 'guest');
 
+  if (!localStorage.getItem('channel_name'))
+    localStorage.setItem('channel_name', 'no_channel');
+
 document.addEventListener('DOMContentLoaded', function() {
 
   // Connect to websocket
@@ -159,12 +162,15 @@ document.addEventListener('DOMContentLoaded', function() {
         // Store data in variables
         let channel_name = data.channel_joined['channel_name'];
 
+        // Store the channel joined to localStorage in order to access its messages
+        localStorage['channel_name'] = channel_name;
+
         // Append child elements to current-channel div
         const p = document.createElement("p");
         const ul = document.createElement("ul");
-        const form = document.createElement("form");
+        const div = document.createElement("div");
         const input = document.createElement("input");
-        const button = document.createElement("input");
+        const button = document.createElement("button");
 
         p.innerHTML = "Joined " + channel_name;
         document.querySelector('#current-channel').appendChild(p);
@@ -172,23 +178,22 @@ document.addEventListener('DOMContentLoaded', function() {
         ul.id = 'channelInfo';
         document.querySelector('#current-channel').appendChild(ul);
 
-        form.id = 'sendMessageForm';
-        form.name = 'sendMessageForm';
-        form.method = 'post';
-        document.querySelector('#current-channel').appendChild(form);
+        div.id = 'sendMessageDiv';
+        div.name = 'sendMessageDiv';
+        document.querySelector('#current-channel').appendChild(div);
 
         input.id = 'sendMessageInput';
         input.name = 'sendMessageInput';
         input.type = 'text';
         input.value = '';
         input.placeholder = 'Type your message here.';
-        document.querySelector('#sendMessageForm').appendChild(input);
+        document.querySelector('#sendMessageDiv').appendChild(input);
 
         button.id = 'sendMessageSubmit';
         button.name = 'sendMessageSubmit';
-        button.type = 'submit';
-        button.value = 'Send';
-        document.querySelector('#sendMessageForm').appendChild(button);
+        let buttonText = document.createTextNode('Send');
+        button.appendChild(buttonText);
+        document.querySelector('#sendMessageDiv').appendChild(button);
 
 
         // forEach to access channel members
@@ -231,30 +236,26 @@ document.addEventListener('DOMContentLoaded', function() {
     return false;
   };
 
-  // When user submits sendMessageForm
-  document.querySelector('#sendMessageForm').onsubmit = () => {
+  // When socket is connected, configure button
+  // BUG: socket connects before the button is configured!
+  socket.on('connect', () => {
+    console.log("Socket on!");
+    // Button should emit "submit message" event
+    document.querySelector('#sendMessageSubmit').onclick = () => {
+      console.log("Button clicked!");
+      // Store the message to be submitted into a variable
+      let message = document.querySelector('#sendMessageInput').value;
+      let channel_name = localStorage['channel_name'];
+      // Emit the message to server
+      socket.emit('submit message', {'message': message, 'channel_name': channel_name});
+    };
+  });
 
-    // When socket is connected, configure button
-    socket.on('connect', () => {
-
-        // Button should emit "submit message" event
-        document.querySelector('#sendMessageSubmit').onclick = () => {
-
-          let message = document.querySelector('#sendMessageInput').value;
-          socket.emit('submit message', {'message': message});
-        };
-    });
-
-    // When a new message is announced, add to unordered list
-    socket.on('announce message', data => {
-
-      const li = document.createElement('li');
-      li.innerHTML = `New message: ${data.message}`;
-      document.querySelector('#channelInfo').append(li);
-    });
-
-    // Stop form from submitting to other page or website
-    return false;
-  };
-
+  // When a new message is announced, add to unordered list
+  socket.on('announce message', data => {
+    const li = document.createElement('li');
+    li.innerHTML = `New message: ${data.message}`;
+    document.querySelector('#channelInfo').append(li);
+    console.log(data.message);
+  });
 });

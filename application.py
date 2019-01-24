@@ -84,7 +84,7 @@ def get_channel_messages(channel):
 
     # Get that channel from channels list
     for c in channels:
-        if c['chanel_name'] == channel:
+        if c['channel_name'] == channel:
             # Get messages from that channel
             channel_messages = ch['channel_messages']
             print(channel_messages)
@@ -96,7 +96,11 @@ def get_channel_messages(channel):
 @socketio.on("submit message")
 def message(data):
     message = data["message"]
+    channel_name = data["channel_name"]
+    # Append the message to messages
+    channels['channel_name']['channel_messages'].append(message)
     print(message)
+    print(channel_name)
     emit("announce message", {"message": message}, broadcast=True)
 
 
