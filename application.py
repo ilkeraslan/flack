@@ -35,7 +35,7 @@ def create_channel():
             "channel_name": ch,
             "channel_creator": ch_creator,
             "channel_members": [],
-            "channel_messages": ["msg_1", "msg_2", "msg_3"]
+            "channel_messages": []
         }
         channels.append(channel)
 
@@ -87,7 +87,6 @@ def get_channel_messages(channel):
         if c['channel_name'] == channel:
             # Get messages from that channel
             channel_messages = ch['channel_messages']
-            print(channel_messages)
             return jsonify({"success": True, "channel_messages": channel_messages})
 
     return jsonify({"success": False})
@@ -98,9 +97,10 @@ def message(data):
     message = data["message"]
     channel_name = data["channel_name"]
     # Append the message to messages
-    channels['channel_name']['channel_messages'].append(message)
-    print(message)
-    print(channel_name)
+    for c in channels:
+        if c['channel_name'] == channel_name:
+            c['channel_messages'].append(message)
+            break
     emit("announce message", {"message": message}, broadcast=True)
 
 
